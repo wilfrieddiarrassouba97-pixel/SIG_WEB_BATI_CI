@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta
+    name="description"
+    content="SIG Web de suivi de l'évolution du bâti en Côte d'Ivoire à partir de données Landsat 8."
+  >
+  <title>Évolution du bâti en Côte d'Ivoire</title>
+
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css"
+  >
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="app-header">
+    <div>
+      <a class="home-link" href="index.html">← Présentation</a>
+      <p class="app-kicker">SIG Web · Landsat 8</p>
+      <h1>Évolution du bâti en Côte d'Ivoire</h1>
+    </div>
+    <p class="app-subtitle">
+      Analyse comparative des surfaces bâties · zone d'étude actuelle : Abidjan
+    </p>
+  </header>
+
+  <main class="app-layout">
+    <aside class="sidebar" aria-label="Outils d'analyse">
+      <section class="panel" aria-labelledby="period-title">
+        <h2 id="period-title">Année analysée</h2>
+        <div class="year-selector" role="group" aria-label="Sélectionner une année">
+          <button class="year-button is-active" type="button" data-year="2015" aria-pressed="true">
+            2015
+          </button>
+          <button class="year-button" type="button" data-year="2020" aria-pressed="false">
+            2020
+          </button>
+          <button class="year-button" type="button" data-year="2025" aria-pressed="false">
+            2025
+          </button>
+        </div>
+      </section>
+
+      <section class="panel statistics-panel" aria-labelledby="statistics-title">
+        <h2 id="statistics-title">Statistiques du bâti · <span id="statistics-year">2015</span></h2>
+        <p id="statistics-period" class="statistics-note">Année de référence : 2015</p>
+        <dl class="comparison-stats" aria-live="polite">
+          <div><dt>Surface bâtie</dt><dd id="statistics-area">—</dd></div>
+          <div><dt>Gain sur la période précédente</dt><dd id="statistics-gain">—</dd></div>
+          <div><dt>Évolution sur la période précédente</dt><dd id="statistics-change">—</dd></div>
+          <div><dt>Évolution depuis 2015</dt><dd id="statistics-total-change">—</dd></div>
+          <div><dt>Précision globale</dt><dd id="statistics-accuracy">—</dd></div>
+          <div><dt>Coefficient Kappa</dt><dd id="statistics-kappa">—</dd></div>
+        </dl>
+        <p id="statistics-error" class="statistics-error" role="alert"></p>
+        <a class="statistics-source" href="data/csv/Resultats_Evolution_Bati_Abidjan_2015_2020_2025.csv" download>Télécharger les résultats (CSV)</a>
+      </section>
+
+      <section class="panel comparison-panel" aria-labelledby="comparison-title">
+        <h2 id="comparison-title">Comparaison temporelle</h2>
+        <div class="comparison-selectors">
+          <label for="comparison-year-a">Année A <span>(gauche)</span></label>
+          <label for="comparison-year-b">Année B <span>(droite)</span></label>
+          <select id="comparison-year-a"><option value="2015" selected>2015</option><option value="2020">2020</option><option value="2025">2025</option></select>
+          <select id="comparison-year-b"><option value="2015">2015</option><option value="2020">2020</option><option value="2025" selected>2025</option></select>
+        </div>
+        <dl class="comparison-stats" aria-live="polite">
+          <div><dt>Surface année A</dt><dd><span id="comparison-area-a">—</span> km²</dd></div>
+          <div><dt>Surface année B</dt><dd><span id="comparison-area-b">—</span> km²</dd></div>
+          <div><dt>Différence</dt><dd><span id="comparison-difference">—</span> km²</dd></div>
+          <div><dt>Taux d’évolution</dt><dd id="comparison-rate">—</dd></div>
+        </dl>
+        <p id="comparison-error" class="comparison-error" role="alert"></p>
+        <div class="comparison-actions">
+          <button id="comparison-start" class="action-button" type="button">Activer la comparaison</button>
+          <button id="comparison-exit" class="action-button action-button-secondary" type="button" disabled>Quitter la comparaison</button>
+        </div>
+      </section>
+
+      <section class="panel chart-panel" aria-labelledby="chart-title">
+        <h2 id="chart-title">Évolution des surfaces bâties</h2>
+        <div class="chart-container">
+          <canvas
+            id="surface-chart"
+            aria-label="Graphique de l'évolution des surfaces bâties"
+            role="img"
+          ></canvas>
+        </div>
+      </section>
+
+      <section class="panel summary-map-panel" aria-labelledby="summary-map-title">
+        <h2 id="summary-map-title">Carte de synthèse</h2>
+        <button id="summary-map-open" class="summary-map-button" type="button">
+          <img
+            src="assets/images/carte-dynamique-bati-abidjan.jpg.jpeg"
+            alt="Dynamique spatiale de l’expansion du bâti dans le District Autonome d’Abidjan entre 2015 et 2025"
+            loading="lazy"
+          >
+          <span>Afficher la carte en grand</span>
+        </button>
+      </section>
+
+      <section class="panel" aria-labelledby="legend-title">
+        <h2 id="legend-title">Légende</h2>
+        <ul class="legend-list">
+          <li><span class="legend-swatch legend-built"></span> Zone bâtie</li>
+          <li><span class="legend-swatch legend-study-area"></span> Limite de la zone d'étude</li>
+        </ul>
+      </section>
+    </aside>
+
+    <section class="map-section" aria-labelledby="map-title">
+      <h2 id="map-title" class="visually-hidden">Carte du bâti dans la zone d'Abidjan</h2>
+      <div id="map" aria-label="Carte interactive du bâti dans la zone d'Abidjan"></div>
+      <p id="map-status" class="map-status" role="status" aria-live="polite">
+        Chargement de la carte…
+      </p>
+    </section>
+  </main>
+
+  <dialog id="summary-map-dialog" class="summary-map-dialog" aria-labelledby="summary-map-dialog-title">
+    <div class="summary-map-dialog-header">
+      <h2 id="summary-map-dialog-title">Dynamique spatiale du bâti — 2015 à 2025</h2>
+      <button id="summary-map-close" class="dialog-close-button" type="button" aria-label="Fermer">×</button>
+    </div>
+    <div class="summary-map-dialog-content">
+      <img
+        src="assets/images/carte-dynamique-bati-abidjan.jpg.jpeg"
+        alt="Carte de la dynamique spatiale de l’expansion du bâti dans le District Autonome d’Abidjan entre 2015 et 2025"
+      >
+    </div>
+  </dialog>
+
+  <noscript>
+    Cette application nécessite JavaScript pour afficher la carte et les statistiques.
+  </noscript>
+
+  <script
+    src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"
+  ></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/proj4@2.12.1/dist/proj4.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/map.js"></script>
+  <script src="js/layers.js"></script>
+  <script src="js/evolution.js"></script>
+  <script src="js/chart.js"></script>
+  <script src="js/comparison.js"></script>
+  <script src="js/summary-map.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
