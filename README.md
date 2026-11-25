@@ -8,11 +8,24 @@ d'Abidjan.
 
 - Carte interactive Leaflet cadrée automatiquement sur les données
 - Fonds OpenStreetMap et imagerie satellite Esri
-- Affichage exclusif de la classe bâtie (`gridcode = 1`) par année
+- Couches annuelles (`DN = 1`) et évolution activables indépendamment
 - Graphique d'évolution avec Chart.js
 - Surface bâtie et taux d'évolution entre deux périodes
 - Population et densité estimées du district autonome d'Abidjan
 - Interface responsive pour ordinateur et mobile
+
+### Choisir les couches visibles
+
+Les boutons **Année des statistiques** pilotent uniquement les indicateurs et le
+graphique. Les cases du sélecteur Leaflet pilotent les couches **Bâti 2015**,
+**Bâti 2020**, **Bâti 2025**, **Évolution du bâti 2015–2025** et la limite d'étude.
+Aucune couche de bâti n'est activée automatiquement. Plusieurs couches peuvent
+être cochées ensemble ; elles peuvent aussi toutes être décochées.
+
+La comparaison masque temporairement les couches de bâti choisies et affiche
+les deux années comparées. Pendant ce mode, les cases de couches sont
+désactivées. **Quitter la comparaison** restaure exactement la sélection
+précédente, y compris si aucune couche de bâti n'était visible.
 
 ## Lancement
 

@@ -30,7 +30,7 @@
   <main class="app-layout">
     <aside class="sidebar" aria-label="Outils d'analyse">
       <section class="panel" aria-labelledby="period-title">
-        <h2 id="period-title">Année analysée</h2>
+        <h2 id="period-title">Année des statistiques</h2>
         <div class="year-selector" role="group" aria-label="Sélectionner une année">
           <button class="year-button is-active" type="button" data-year="2015" aria-pressed="true">
             2015
@@ -42,6 +42,11 @@
             2025
           </button>
         </div>
+      </section>
+
+      <section class="panel" aria-labelledby="layer-help-title">
+        <h2 id="layer-help-title">Couches visibles</h2>
+        <p class="statistics-note">Cochez ou décochez les couches en haut à droite de la carte. Vous pouvez afficher plusieurs années, l’évolution seule, ou uniquement le fond de carte. Le choix de l’année des statistiques ne modifie pas les couches.</p>
       </section>
 
       <section class="panel statistics-panel" aria-labelledby="statistics-title">
@@ -73,7 +78,16 @@
           <div><dt>Différence</dt><dd><span id="comparison-difference">—</span> km²</dd></div>
           <div><dt>Taux d’évolution</dt><dd id="comparison-rate">—</dd></div>
         </dl>
+        <h3 class="comparison-demographics-title">Population du district · estimations</h3>
+        <dl class="comparison-stats comparison-demographics" aria-live="polite" aria-describedby="comparison-population-note">
+          <div><dt>Population estimée · A</dt><dd><span id="comparison-population-a">—</span><small class="comparison-unit">habitants</small></dd></div>
+          <div><dt>Population estimée · B</dt><dd><span id="comparison-population-b">—</span><small class="comparison-unit">habitants</small></dd></div>
+          <div><dt>Densité estimée · A</dt><dd><span id="comparison-density-a">—</span><small class="comparison-unit">hab./km²</small></dd></div>
+          <div><dt>Densité estimée · B</dt><dd><span id="comparison-density-b">—</span><small class="comparison-unit">hab./km²</small></dd></div>
+        </dl>
+        <p id="comparison-population-note" class="comparison-population-note">Estimations pour l’ensemble du district autonome d’Abidjan. Les densités sont rapportées à une superficie de <span id="comparison-density-area">2 153</span> km².</p>
         <p id="comparison-error" class="comparison-error" role="alert"></p>
+        <p id="comparison-layer-note" class="comparison-population-note" hidden>Seules les deux années comparées sont affichées. Quittez la comparaison pour retrouver vos couches et modifier leur sélection.</p>
         <div class="comparison-actions">
           <button id="comparison-start" class="action-button" type="button">Activer la comparaison</button>
           <button id="comparison-exit" class="action-button action-button-secondary" type="button" disabled>Quitter la comparaison</button>
